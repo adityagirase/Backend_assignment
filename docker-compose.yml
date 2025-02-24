@@ -1,0 +1,40 @@
+# version: '3.8'
+
+services:
+  weaviate:
+    image: semitechnologies/weaviate:1.22.4
+    ports:
+      - "8080:8080"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      CLUSTER_HOSTNAME: 'node1'
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+    networks:
+      - rag-network
+
+  rag-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - WEAVIATE_URL=http://weaviate:8080
+    depends_on:
+      - weaviate
+    volumes:
+      - ./app:/app
+    networks:
+      - rag-network
+    restart: always
+
+networks:
+  rag-network:
+    driver: bridge
+
+volumes:
+  weaviate_data:

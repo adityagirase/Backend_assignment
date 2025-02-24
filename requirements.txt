@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-multipart
+PyPDF2
+python-docx
+openai
+weaviate-client
+pydantic
+python-dotenv
